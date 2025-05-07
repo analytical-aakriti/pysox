@@ -656,18 +656,101 @@ class Transformer(object):
 
     def chorus(self, gain_in=0.5, gain_out=0.9, n_voices=3, delays=None,
                decays=None, speeds=None, depths=None, shapes=None):
-        
-        effect_args = []
+        # Validate gain parameters
+        if not is_number(gain_in) or gain_in <= 0 or gain_in > 1:
+            raise ValueError('gain_in must be a number between 0 and 1.')
+        if not is_number(gain_out) or gain_out <= 0 or gain_out > 1:
+            raise ValueError('gain_out must be a number between 0 and 1.')
 
+        # Validate n_voices
+        if not isinstance(n_voices, int) or n_voices <= 0:
+            raise ValueError('n_voices must be a positive integer.')
+
+        # Generate random values for None parameters
+        if delays is None:
+            delays = [random.uniform(40.0, 60.0) for _ in range(n_voices)]
+        if decays is None:
+            decays = [random.uniform(0.3, 0.4) for _ in range(n_voices)]
+        if speeds is None:
+            speeds = [random.uniform(0.25, 0.4) for _ in range(n_voices)]
+        if depths is None:
+            depths = [random.uniform(1.0, 3.0) for _ in range(n_voices)]
+        if shapes is None:
+            shapes = [random.choice(['s', 't']) for _ in range(n_voices)]
+
+        # Validate list parameters
+        if not isinstance(delays, list):
+            raise ValueError('delays must be a list.')
+        if not isinstance(decays, list):
+            raise ValueError('decays must be a list.')
+        if not isinstance(speeds, list):
+            raise ValueError('speeds must be a list.')
+        if not isinstance(depths, list):
+            raise ValueError('depths must be a list.')
+        if not isinstance(shapes, list):
+            raise ValueError('shapes must be a list.')
+
+        # Check lengths
+        if len(delays) != n_voices:
+            raise ValueError('delays must be a list of length {}.'.format(n_voices))
+        if len(decays) != n_voices:
+            raise ValueError('decays must be a list of length {}.'.format(n_voices))
+        if len(speeds) != n_voices:
+            raise ValueError('speeds must be a list of length {}.'.format(n_voices))
+        if len(depths) != n_voices:
+            raise ValueError('depths must be a list of length {}.'.format(n_voices))
+        if len(shapes) != n_voices:
+            raise ValueError('shapes must be a list of length {}.'.format(n_voices))
+
+        # Validate delay values
+        for i, delay in enumerate(delays):
+            if not is_number(delay):
+                raise ValueError('delays must be a list of numbers.')
+            if delay <= 20:
+                raise ValueError('All delays must be greater than 20.')
+
+        # Validate decay values
+        for i, decay in enumerate(decays):
+            if not is_number(decay):
+                raise ValueError('decays must be a list of numbers.')
+            if decay < 0 or decay > 1:
+                raise ValueError('All decays must be between 0 and 1.')
+
+        # Validate speed values
+        for i, speed in enumerate(speeds):
+            if not is_number(speed):
+                raise ValueError('speeds must be a list of numbers.')
+            if speed <= 0:
+                raise ValueError('All speeds must be positive.')
+
+        # Validate depth values
+        for i, depth in enumerate(depths):
+            if not is_number(depth):
+                raise ValueError('depths must be a list of numbers.')
+            if depth <= 0:
+                raise ValueError('All depths must be positive.')
+
+        # Validate shape values
+        for i, shape in enumerate(shapes):
+            if shape not in ['s', 't']:
+                raise ValueError('All shapes must be "s" or "t".')
+
+        # Build command arguments
+        effect_args = ['chorus', str(gain_in), str(gain_out)]
+
+        # Add voice-specific parameters
         for i in range(n_voices):
             effect_args.extend([
-               
+                '{:.6f}'.format(delays[i]),
+                '{:.6f}'.format(decays[i]),
+                '{:.6f}'.format(speeds[i]),
+                '{:.6f}'.format(depths[i]),
+                '-' + shapes[i]
             ])
 
         self.effects.extend(effect_args)
         self.effects_log.append('chorus')
         return self
-
 
     def compand(self, attack_time=0.3, decay_time=0.8, soft_knee_db=6.0,
                 tf_points=[(-70, -70), (-60, -20), (0, 0)]):
