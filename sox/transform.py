@@ -700,7 +700,15 @@ class Transformer(object):
             If None, the individual shapes are chosen automatically.
 
         '''
-        
+        effect_args = []
+
+        for i in range(n_voices):
+            effect_args.extend([
+               
+            ])
+
+        self.effects.extend(effect_args)
+        self.effects_log.append('chorus')
         return self
 
 
