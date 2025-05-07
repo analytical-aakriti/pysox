@@ -656,50 +656,7 @@ class Transformer(object):
 
     def chorus(self, gain_in=0.5, gain_out=0.9, n_voices=3, delays=None,
                decays=None, speeds=None, depths=None, shapes=None):
-        '''Add a chorus effect to the audio. This can makeasingle vocal sound
-        like a chorus, but can also be applied to instrumentation.
-
-        Chorus resembles an echo effect with a short delay, but whereas with
-        echo the delay is constant, with chorus, it is varied using sinusoidal
-        or triangular modulation. The modulation depth defines the range the
-        modulated delay is played before or after the delay. Hence the delayed
-        sound will sound slower or faster, that is the delayed sound tuned
-        around the original one, like in a chorus where some vocals are
-        slightly off key.
-
-        Parameters
-        ----------
-        gain_in : float, default=0.3
-            The time in seconds over which the instantaneous level of the input
-            signal is averaged to determine increases in volume.
-        gain_out : float, default=0.8
-            The time in seconds over which the instantaneous level of the input
-            signal is averaged to determine decreases in volume.
-        n_voices : int, default=3
-            The number of voices in the chorus effect.
-        delays : list of floats > 20 or None, default=None
-            If a list, the list of delays (in miliseconds) of length n_voices.
-            If None, the individual delay parameters are chosen automatically
-            to be between 40 and 60 miliseconds.
-        decays : list of floats or None, default=None
-            If a list, the list of decays (as a fraction of gain_in) of length
-            n_voices.
-            If None, the individual decay parameters are chosen automatically
-            to be between 0.3 and 0.4.
-        speeds : list of floats or None, default=None
-            If a list, the list of modulation speeds (in Hz) of length n_voices
-            If None, the individual speed parameters are chosen automatically
-            to be between 0.25 and 0.4 Hz.
-        depths : list of floats or None, default=None
-            If a list, the list of depths (in miliseconds) of length n_voices.
-            If None, the individual delay parameters are chosen automatically
-            to be between 1 and 3 miliseconds.
-        shapes : list of 's' or 't' or None, deault=None
-            If a list, the list of modulation shapes - 's' for sinusoidal or
-            't' for triangular - of length n_voices.
-            If None, the individual shapes are chosen automatically.
-
-        '''
+        
         effect_args = []
 
         for i in range(n_voices):
