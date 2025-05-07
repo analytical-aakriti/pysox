@@ -18,6 +18,59 @@ def new_transformer():
 
 class TestTransformerChorus(unittest.TestCase):
 
+    def test_default(self):
+        tfm = new_transformer()
+        tfm.chorus()
+
+        # check only the first 3 args - the rest are randomized
+        actual_args = tfm.effects[:3]
+        expected_args = ['chorus', '0.5', '0.9']
+        self.assertEqual(expected_args, actual_args)
+
+        self.assertGreaterEqual(float(tfm.effects[3]), 40.0)
+        self.assertLessEqual(float(tfm.effects[3]), 60.0)
+        self.assertGreaterEqual(float(tfm.effects[4]), 0.3)
+        self.assertLessEqual(float(tfm.effects[4]), 0.4)
+        self.assertGreaterEqual(float(tfm.effects[5]), 0.25)
+        self.assertLessEqual(float(tfm.effects[5]), 0.4)
+        self.assertGreaterEqual(float(tfm.effects[6]), 1.0)
+        self.assertLessEqual(float(tfm.effects[6]), 3.0)
+        self.assertIn(tfm.effects[7], ['-s', '-t'])
+
+        actual_log = tfm.effects_log
+        expected_log = ['chorus']
+        self.assertEqual(expected_log, actual_log)
+
+        actual_res = tfm.build(INPUT_FILE, OUTPUT_FILE)
+        expected_res = True
+        self.assertEqual(expected_res, actual_res)
+
+        tfm_assert_array_to_file_output(INPUT_FILE, OUTPUT_FILE, tfm)
+
+    def test_explicit_args(self):
+        tfm = new_transformer()
+        tfm.chorus(
+            n_voices=1, delays=[50.0], decays=[0.32], speeds=[0.25],
+            depths=[2.0], shapes=['t']
+        )
+
+        # check only the first 3 args - the rest are randomized
+        actual_args = tfm.effects
+        expected_args = [
+            'chorus', '0.5', '0.9', '50.000000',
+            '0.320000', '0.250000', '2.000000', '-t'
+        ]
+        self.assertEqual(expected_args, actual_args)
+
+        actual_log = tfm.effects_log
+        expected_log = ['chorus']
+        self.assertEqual(expected_log, actual_log)
+
+        actual_res = tfm.build(INPUT_FILE, OUTPUT_FILE)
+        expected_res = True
+        self.assertEqual(expected_res, actual_res)
+
+        tfm_assert_array_to_file_output(INPUT_FILE, OUTPUT_FILE, tfm)
     
 
     def test_invalid_gain_in(self):
